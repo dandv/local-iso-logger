@@ -1,6 +1,6 @@
 {
   "name": "local-iso-logger",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Simple logger with local timestamps in ISO8601 format, and clean stack traces on errors",
   "keywords": [
     "log",
@@ -22,6 +22,13 @@
     "url": "https://github.com/dandv"
   },
   "type": "commonjs",
+  "exports": {
+    "node": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "default": "./index.mjs"
+  },
   "main": "index.js",
   "files": [
     "index.ts",
@@ -32,9 +39,9 @@
     "build": "tsc",
     "clean": "rm index*.js index.mjs",
     "lint": "eslint index*.ts",
-    "prepublish:esm": "tsc index.ts -t ES2015 --types node --moduleResolution node && mv index.js index.mjs",
-    "prepublish:cjs": "tsc index.ts --removeComments",
-    "prepublish": "npm run prepublish:esm; npm run prepublish:cjs",
+    "prepublishOnly:cjs": "tsc index.ts --removeComments",
+    "prepublishOnly:esm": "tsc index.ts -t ES2015 --types node --moduleResolution node && mv index.js index.mjs",
+    "prepublishOnly": "npm run prepublishOnly:esm; npm run prepublishOnly:cjs",
     "test": "jest"
   },
   "dependencies": {
@@ -55,7 +62,8 @@
   },
   "comments": {
     "scripts": {
-      "prepublish:esm": "TypeScript can't generate .mjs output directly (https://github.com/microsoft/TypeScript/issues/18442) and --outFile doesn't work with ES Modules"
-    }
+      "prepublishOnly:esm": "TypeScript can't generate .mjs output directly (https://github.com/microsoft/TypeScript/issues/18442) and --outFile doesn't work with ES Modules"
+    },
+    "exports": "[Conditional exports](https://nodejs.org/api/esm.html#esm_conditional_exports) enable TypeScript code transpiled with ES Modules, to use named imports. TypeScript doesn't directly support .mjs input files - https://github.com/microsoft/TypeScript/issues/27957"
   }
 }
