@@ -1,6 +1,6 @@
 {
   "name": "local-iso-logger",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Simple logger with local timestamps in ISO8601 format, and clean stack traces on errors",
   "keywords": [
     "log",
@@ -23,13 +23,19 @@
   },
   "type": "commonjs",
   "main": "index.js",
+  "files": [
+    "index.ts",
+    "index.mjs",
+    "index.js"
+  ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm index.js index.mjs",
+    "clean": "rm index*.js index.mjs",
     "lint": "eslint index*.ts",
     "prepublish:esm": "tsc index.ts -t ES2015 --types node --moduleResolution node && mv index.js index.mjs",
     "prepublish:cjs": "tsc index.ts --removeComments",
-    "prepublish": "npm run prepare:esm; npm run prepare:cjs"
+    "prepublish": "npm run prepublish:esm; npm run prepublish:cjs",
+    "test": "jest"
   },
   "dependencies": {
     "clean-stack": "^3.0.0",
