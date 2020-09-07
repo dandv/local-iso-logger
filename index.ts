@@ -1,7 +1,7 @@
 import { createWriteStream } from 'fs';
 import { localISOdt } from 'local-iso-dt';
 import * as cleanStack from 'clean-stack';
-import { serializeError } from 'serialize-error';
+import * as SE from 'serialize-error';  // because https://github.com/sindresorhus/serialize-error/issues/36#issuecomment-688185049
 import { Stream } from 'stream';
 
 export function toJson(object, spaces = 2): string {
@@ -49,7 +49,7 @@ export class Logger extends Stream.Writable {
   // Replace \n with newlines. Not called for console output, in order to preserve colorization.
   static message2json(potentialObject): (object | string) {
     if (typeof potentialObject === 'object')
-      return toJson(serializeError(potentialObject), 4).replace(/\\n/g, '\n');
+      return toJson(SE.serializeError(potentialObject), 4).replace(/\\n/g, '\n');
     if (typeof potentialObject === 'string')
       return potentialObject.replace(/\\n/g, '\n');
     return potentialObject;
