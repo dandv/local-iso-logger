@@ -1,5 +1,5 @@
 import { createWriteStream } from 'fs';
-import { localISOdt } from 'local-iso-dt';
+import { localISOdt } from 'local-iso-dt'; export { localISOdt };
 import * as cleanStack from 'clean-stack';
 import * as SE from 'serialize-error';  // because https://github.com/sindresorhus/serialize-error/issues/36#issuecomment-688185049
 import { Stream } from 'stream';
@@ -42,8 +42,8 @@ export class Logger extends Stream.Writable {
       this.stream = createWriteStream(filename, { flags:'a' });
   }
 
-  static timestamp(): string {
-    return `[${localISOdt().replace('T', ' ')}]`;
+  static timestamp(datetime?): string {
+    return `[${localISOdt(datetime).replace('T', ' ')}]`;
   }
 
   // Replace \n with newlines. Not called for console output, in order to preserve colorization.
@@ -73,29 +73,36 @@ export class Logger extends Stream.Writable {
     return initialNewlines + Logger.timestamp();
   }
 
+  // Log in grey color to the console, and with the `debug` prefix to the file.
   debug(...messages): void {
     const prefix = Logger.prepareMessages(messages);
     // ANSI color codes from https://github.com/Marak/colors.js/blob/master/lib/styles.js
     console.debug(`\u001b[90m${prefix}\u001b[39m`, ...messages);
     this.stream?.write(`${prefix} debug: ${Logger.messages2json(messages)}\n`);
   }
+
+  // Log in normal color to the console (via `console.info`), and with the `info` prefix to the file.
   info(...messages): void {
     const prefix = Logger.prepareMessages(messages);
     console.info(prefix, ...messages);
     this.stream?.write(`${prefix} info: ${Logger.messages2json(messages)}\n`);
   }
+
+  // Log to the console via `console.warn`, and with the `WARN` prefix to both the console and the file.
   warn(...messages): void {
     const prefix = Logger.prepareMessages(messages);
     console.warn(`\u001b[33m${prefix} WARN:\u001b[39m`, ...messages);
     this.stream?.write(`${prefix} WARN: ${Logger.messages2json(messages)}\n`);
   }
+
+  // Log to the console via `console.error`, and with the `ERROR` prefix to both the console and the file.
   error(...messages): void {
     const prefix = Logger.prepareMessages(messages);
     console.error(`\u001b[31m${prefix} ERROR:\u001b[39m`, ...messages);
     this.stream?.write(`${prefix} ERROR: ${Logger.messages2json(messages)}\n`);
   }
 
-  // Support being used as a writable stream
+  // Write to the stream directly, with the `debug` prefix. Also passes the message to `console.debug`, in normal color.
   write(message): boolean {
     const prefix = Logger.prepareMessages([message]);
     console.debug(prefix, message);

@@ -1,5 +1,12 @@
 import { Logger } from '.';
 
+test('constructor', () => {
+  const logger = new Logger();
+  expect(logger).toBeInstanceOf(Logger);
+  logger.info('test passed');
+  logger.teardown();
+})
+
 test('array', () => {
   const messages = [
     [
